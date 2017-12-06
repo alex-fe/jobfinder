@@ -1,23 +1,31 @@
 
-# import getpass
 import json
 import urllib2
-import socket
 
 from bs4 import BeautifulSoup
 
 from job import Job
+
 from utils import BadData, add_url_params
 
 
 GLASSDOOR_URL = 'http://api.glassdoor.com/api/api.htm'
+KEY = 'bBT8AIvltt9'
+PID = '235446'
 
 
-def get(query, params):
+def get(params):
+    """Modified GET request.
+
+    Args:
+        params(dict): Dictionary of query parameters.
+
+    Returns:
+        JSON encoded dictionary.
+    """
     params.update({
         'v': '1',
         'format': 'json',
-        'q': query,
         'action': 'employers',
         'userip': '192.168.43.42',
         'useragent': 'Mozilla'
@@ -31,12 +39,9 @@ def get(query, params):
 
 
 def main():
-    # query = raw_input('What kind of job are you looking for? ')
-    # KEY = getpass.getpass("Please type key")
-    # PID = getpass.getpass('Please type Partner ID')
-    KEY = 'bBT8AIvltt9'
-    PID = '235446'
-    params = {'t.k': KEY, 't.p': PID}
+    """Operation headquarters."""
+    query = raw_input('What kind of job are you looking for? ')
+    params = {'t.k': KEY, 't.p': PID, 'q': query}
     json = get('developer', params)
     jobs = [Job(j) for j in json['response']['employers']]
 
