@@ -26,7 +26,7 @@ def get(params):
     params.update({
         'v': '1',
         'format': 'json',
-        'action': 'employers',
+        'action': 'jobs',
         'userip': '192.168.43.42',
         'useragent': 'Mozilla'
     })
@@ -40,11 +40,15 @@ def get(params):
 
 def main():
     """Operation headquarters."""
-    query = raw_input('What kind of job are you looking for? ')
-    params = {'t.k': KEY, 't.p': PID, 'q': query}
-    json = get('developer', params)
-    jobs = [Job(j) for j in json['response']['employers']]
-
+    # query = raw_input('What kind of job are you looking for? ')
+    params = {'t.k': KEY, 't.p': PID, 'q': 'developer'}
+    try:
+        json = get(params)
+    except urllib2.HTTPError, err:
+        raise err
+    else:
+        jobs = [Job(j) for j in json['response']['employers']]
+        import pdb; pdb.set_trace()
 
 if __name__ == '__main__':
     main()
