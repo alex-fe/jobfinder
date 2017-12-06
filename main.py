@@ -1,10 +1,11 @@
 
-# import json
-import getpass
+# import getpass
+import urllib2
 import socket
-# import requests
 
-from utils import add_url_params
+from bs4 import BeautifulSoup
+
+from utils import BadData, add_url_params
 
 
 GLASSDOOR_URL = 'http://api.glassdoor.com/api/api.htm'
@@ -12,22 +13,34 @@ GLASSDOOR_URL = 'http://api.glassdoor.com/api/api.htm'
 
 def get(query, params):
     params.update({
-        'v': 1.1,
+        'v': '1',
         'format': 'json',
         'q': query,
-        'action': 'job',
-        'userip': socket.gethostbyname(socket.gethostname()),
-        'useragent': '51.0.2704.84'
+        'action': 'employers',
+        'userip': '192.168.43.42',
+        'useragent': 'Mozilla'
     })
-    print add_url_params(GLASSDOOR_URL, params)
+    url = add_url_params(GLASSDOOR_URL, params)
+    header = {'User-Agent': 'Mozilla/5.0'}
+    req = urllib2.Request(url, headers=header)
+    response = urllib2.urlopen(req)
+    soup = BeautifulSoup(response, "html.parser")
+    if not soup:
+        raise BadData(params)
+    else:
+        return soup
 
 
 def main():
-    KEY = getpass.getpass("Please type key")
-    PID = getpass.getpass('Please type Partner ID')
+    # query = raw_input('What kind of job are you looking for? ')
+    # KEY = getpass.getpass("Please type key")
+    # PID = getpass.getpass('Please type Partner ID')
+    KEY = 'bBT8AIvltt9'
+    PID = '235446'
     params = {'t.k': KEY, 't.p': PID}
-    get(params)
-
+    data = get('developer', params)
+    
+    
 
 if __name__ == '__main__':
     main()
