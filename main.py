@@ -1,10 +1,12 @@
 
 # import getpass
+import json
 import urllib2
 import socket
 
 from bs4 import BeautifulSoup
 
+from job import Job
 from utils import BadData, add_url_params
 
 
@@ -25,10 +27,7 @@ def get(query, params):
     req = urllib2.Request(url, headers=header)
     response = urllib2.urlopen(req)
     soup = BeautifulSoup(response, "html.parser")
-    if not soup:
-        raise BadData(params)
-    else:
-        return soup
+    return json.loads(str(soup))
 
 
 def main():
@@ -38,9 +37,9 @@ def main():
     KEY = 'bBT8AIvltt9'
     PID = '235446'
     params = {'t.k': KEY, 't.p': PID}
-    data = get('developer', params)
-    
-    
+    json = get('developer', params)
+    jobs = [Job(j) for j in json['response']['employers']]
+
 
 if __name__ == '__main__':
     main()
